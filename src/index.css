@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  
+  --color-deep-slate: #2C3E50;
+  --color-rust: #D35400;
+  --color-sand: #F4F1EA;
+  --color-ink: #141B23;
+  
+  --color-background: var(--color-deep-slate);
+  --color-foreground: var(--color-white);
+  
+  --color-primary: var(--color-deep-slate);
+  --color-accent: var(--color-rust);
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+}
+
+@layer base {
+  :root {
+    --background: 210 29% 24%; /* #2C3E50 */
+    --foreground: 0 0% 100%;
+    --card: 210 29% 24%;
+    --card-foreground: 0 0% 100%;
+    --popover: 210 29% 24%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 210 29% 24%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 29% 30%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 29% 20%;
+    --muted-foreground: 210 29% 70%;
+    --accent: 24 95% 41%; /* #D35400 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 29% 35%;
+    --input: 210 29% 35%;
+    --ring: 24 95% 41%;
+    --radius: 0px; /* Editorial often uses sharp corners */
+  }
+}
+
+@layer utilities {
+  .grid-bg {
+    background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  
+  .text-editorial-hero {
+    font-size: clamp(3rem, 10vw, 100px);
+    line-height: 0.85;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+  
+  .editorial-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-weight: 700;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased min-h-screen relative;
+  }
+}
