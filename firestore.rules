@@ -1,0 +1,86 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: students
+    // Fields: name (string), gpa (string), cvUrl (string), photoUrl (string), 
+    //         tags (list), bio (string), graduationDate (string), isTopScorer (bool)
+    //
+    // Collection: services
+    // Fields: title (string), description (string), category (string), icon (string)
+    //
+    // Collection: projects
+    // Fields: title (string), category (string), problem (string), methodology (string), 
+    //         beforeImageUrl (string), afterImageUrl (string)
+    //
+    // Collection: bookings
+    // Fields: clientName (string), clientEmail (string), serviceType (string), 
+    //         date (timestamp), notes (string), status (string)
+    //
+    // Collection: leads
+    // Fields: name (string), email (string), subject (string), message (string), createdAt (timestamp)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         (request.auth.token.email == "zubairahmadisb7p2@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    // Students, Services, Projects: Public Read, Admin Write
+    match /students/{studentId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /projects/{projectId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Bookings: Public Create, Admin Read/Update/Delete
+    match /bookings/{bookingId} {
+      allow create: if request.resource.data.keys().hasAll(['clientName', 'clientEmail', 'serviceType', 'date']) &&
+                      isValidEmail(request.resource.data.clientEmail);
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Leads: Public Create, Admin Read/Update/Delete
+    match /leads/{leadId} {
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'message']) &&
+                      isValidEmail(request.resource.data.email);
+      allow read, update, delete: if isAdmin();
+    }
+
+    // User profiles (for admin role check)
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+  }
+}

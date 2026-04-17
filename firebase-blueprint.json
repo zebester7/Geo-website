@@ -1,0 +1,80 @@
+{
+  "entities": {
+    "Student": {
+      "title": "Student",
+      "description": "A geophysics student profile for recruitment.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the student" },
+        "gpa": { "type": "string", "description": "Academic GPA" },
+        "cvUrl": { "type": "string", "description": "URL to the PDF CV" },
+        "photoUrl": { "type": "string", "description": "URL to the profile photo" },
+        "tags": { "type": "array", "items": { "type": "string" }, "description": "Specialization tags" },
+        "bio": { "type": "string", "description": "Short professional bio" },
+        "graduationDate": { "type": "string", "format": "date", "description": "Expected or actual graduation date" },
+        "isTopScorer": { "type": "boolean", "description": "Whether the student is featured as a top scorer" }
+      },
+      "required": ["name", "gpa", "tags"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "A professional service offered by the department.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string", "enum": ["Field Surveys", "Advanced Analytics", "AI & ML Solutions", "Earth Science Projects"] },
+        "icon": { "type": "string" }
+      },
+      "required": ["title", "description", "category"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "A showcase project for the portfolio.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "problem": { "type": "string" },
+        "methodology": { "type": "string" },
+        "beforeImageUrl": { "type": "string" },
+        "afterImageUrl": { "type": "string" }
+      },
+      "required": ["title", "category", "problem", "methodology"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "A client booking for consultancy or tuition.",
+      "type": "object",
+      "properties": {
+        "clientName": { "type": "string" },
+        "clientEmail": { "type": "string", "format": "email" },
+        "serviceType": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "notes": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "completed", "cancelled"] }
+      },
+      "required": ["clientName", "clientEmail", "serviceType", "date"]
+    },
+    "Lead": {
+      "title": "Lead",
+      "description": "A contact form inquiry.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "subject": { "type": "string" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "message"]
+    }
+  },
+  "firestore": {
+    "/students/{studentId}": { "schema": "Student", "description": "Collection of student profiles" },
+    "/services/{serviceId}": { "schema": "Service", "description": "Collection of professional services" },
+    "/projects/{projectId}": { "schema": "Project", "description": "Collection of portfolio projects" },
+    "/bookings/{bookingId}": { "schema": "Booking", "description": "Collection of client bookings" },
+    "/leads/{leadId}": { "schema": "Lead", "description": "Collection of contact form inquiries" }
+  }
+}
