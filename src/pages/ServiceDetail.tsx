@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, ChevronRight, ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
+import CustomCursor from "@/components/Cursor";
 
 const serviceDetails: Record<string, any> = {
   "field-surveys": {
@@ -138,24 +139,29 @@ export default function ServiceDetail() {
 
   if (!service) {
     return (
-      <div className="relative min-h-screen">
-        <div className="grid-bg absolute inset-0 pointer-events-none" />
-        <div className="container mx-auto px-4 lg:px-10 relative z-10">
-          <div className="border-x border-white/10 min-h-screen py-20 flex items-center justify-center">
-            <div className="text-center">
-              <h1 className="text-4xl font-black uppercase tracking-tighter mb-4">Service Not Found</h1>
-              <Button asChild className="bg-accent hover:bg-accent/90 text-white rounded-none py-6 px-8">
-                <Link to="/services">Back to Services</Link>
-              </Button>
+      <>
+        <CustomCursor color="#D35400" size={32} trailing={true} />
+        <div className="relative min-h-screen">
+          <div className="grid-bg absolute inset-0 pointer-events-none" />
+          <div className="container mx-auto px-4 lg:px-10 relative z-10">
+            <div className="border-x border-white/10 min-h-screen py-20 flex items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-4xl font-black uppercase tracking-tighter mb-4">Service Not Found</h1>
+                <Button asChild className="bg-accent hover:bg-accent/90 text-white rounded-none py-6 px-8">
+                  <Link to="/services">Back to Services</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="relative min-h-screen">
+    <>
+      <CustomCursor color="#D35400" size={32} trailing={true} />
+      <div className="relative min-h-screen">
       <div className="grid-bg absolute inset-0 pointer-events-none" />
       
       <div className="container mx-auto px-4 lg:px-10 relative z-10">
@@ -254,6 +260,6 @@ export default function ServiceDetail() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -9,7 +9,7 @@ export function Footer() {
           <div className="space-y-6">
             <div className="flex items-center">
               <span className="text-lg font-extrabold tracking-[0.2em] text-white uppercase">
-                TERRA<span className="text-accent">INSIGHTS</span>
+                GEOTECH<span className="text-accent"> SOLUTIONS</span>
               </span>
             </div>
             <p className="text-xs leading-relaxed font-light">
@@ -58,13 +58,13 @@ export function Footer() {
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 text-accent shrink-0" />
-                <span>contact@terra-insights.com</span>
+                <span>contact@geotechsolutions.com</span>
               </li>
             </ul>
           </div>
         </div>
         <div className="mt-10 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-[0.3em] font-bold text-white/20">
-          <p>© {new Date().getFullYear()} TERRA INSIGHTS. ALL RIGHTS RESERVED.</p>
+          <p>© {new Date().getFullYear()} GEOTECH SOLUTIONS. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-8">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>

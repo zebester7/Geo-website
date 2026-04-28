@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Globe, Database, Cpu, Leaf, ArrowRight, CheckCircle2, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
+import CustomCursor from "@/components/Cursor";
 
 const services = [
   {
@@ -74,7 +75,9 @@ const services = [
 
 export default function Services() {
   return (
-    <div className="relative min-h-screen">
+    <>
+      <CustomCursor color="#D35400" size={32} trailing={true} />
+      <div className="relative min-h-screen">
       <div className="grid-bg absolute inset-0 pointer-events-none" />
       
       <div className="container mx-auto px-4 lg:px-10 relative z-10">
@@ -85,7 +88,7 @@ export default function Services() {
               PROFESSIONAL<br />SERVICES
             </h1>
             <p className="mt-8 text-white/60 font-light leading-relaxed max-w-2xl">
-              From the field to the cloud, we provide end-to-end geophysical solutions powered by technical expertise and computational innovation.
+              Under professional supervision of Dr. Tahir Azeem, we provide end-to-end geophysical solutions powered by technical expertise and computational innovation.
             </p>
           </header>
 
@@ -147,6 +150,6 @@ export default function Services() {
           </section>
         </div>
       </div>
-    </div>
+    </>
   );
 }

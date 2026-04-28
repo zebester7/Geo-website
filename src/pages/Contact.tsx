@@ -36,7 +36,9 @@ export default function Contact() {
   };
 
   return (
-    <div className="relative min-h-screen">
+    <>
+      <CustomCursor color="#D35400" size={32} trailing={true} />
+      <div className="relative min-h-screen">
       <div className="grid-bg absolute inset-0 pointer-events-none" />
       
       <div className="container mx-auto px-4 lg:px-10 relative z-10">
@@ -174,6 +176,6 @@ export default function Contact() {
           </aside>
         </div>
       </div>
-    </div>
+    </>
   );
 }

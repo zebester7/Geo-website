@@ -253,7 +253,7 @@ export default function Home() {
                     Top Scorer Spotlight
                   </h3>
                   <h2 className="text-2xl font-black text-white mb-1">
-                    {topScorer?.name || "Elena M. Vance"}
+                    {topScorer?.name || "Farmanullah Khan"}
                   </h2>
                   <p className="text-xs text-white/90">
                     GPA {topScorer?.gpa || "3.98"} | Specialization:{" "}

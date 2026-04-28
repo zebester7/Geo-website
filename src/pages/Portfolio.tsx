@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react";
 import { motion } from "motion/react";
+import CustomCursor from "@/components/Cursor";
 
 const projects = [
   {
@@ -94,7 +95,9 @@ const projects = [
 
 export default function Portfolio() {
   return (
-    <div className="relative min-h-screen">
+    <>
+      <CustomCursor color="#D35400" size={32} trailing={true} />
+      <div className="relative min-h-screen">
       <div className="grid-bg absolute inset-0 pointer-events-none" />
       
       <div className="container mx-auto px-4 lg:px-10 relative z-10">
@@ -201,6 +204,6 @@ export default function Portfolio() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
