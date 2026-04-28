@@ -7,51 +7,67 @@ import { motion } from "motion/react";
 
 const services = [
   {
+    id: "field-surveys",
     title: "Field Surveys",
     description: "High-precision data acquisition for various geophysical methods.",
     icon: Globe,
     category: "Data Acquisition",
+    fullDescription: "Our comprehensive field survey services provide high-precision data acquisition using cutting-edge equipment and proven methodologies.",
     features: [
       "Induced Polarization (IP) Surveys",
       "Gravity & Magnetic Mapping",
       "Electrical Resistivity Tomography",
-      "Ground Penetrating Radar (GPR)"
+      "Ground Penetrating Radar (GPR)",
+      "Airborne EM Surveys",
+      "Marine Seismic Acquisition"
     ]
   },
   {
+    id: "advanced-analytics",
     title: "Advanced Analytics",
     description: "Expert processing and interpretation of complex geophysical datasets.",
     icon: Database,
     category: "Data Processing",
+    fullDescription: "Transform raw geophysical data into actionable insights with our advanced analytics and interpretation services.",
     features: [
       "2D/3D Seismic Interpretation",
       "GIS Integration & Spatial Analysis",
       "Structural Modeling",
-      "Inversion & Forward Modeling"
+      "Inversion & Forward Modeling",
+      "Velocity Model Building",
+      "Attribute Analysis & Ant Tracking"
     ]
   },
   {
+    id: "ai-solutions",
     title: "AI & ML Solutions",
     description: "Cutting-edge machine learning models for Earth science challenges.",
     icon: Cpu,
     category: "Innovation",
+    fullDescription: "Leverage artificial intelligence and machine learning to solve complex geophysical challenges with unprecedented accuracy.",
     features: [
       "Automated Lithology Classification",
       "Neural Network Seismic Processing",
       "Predictive Mineral Mapping",
-      "Anomaly Detection Algorithms"
+      "Anomaly Detection Algorithms",
+      "Deep Learning Image Interpretation",
+      "Reinforcement Learning Optimization"
     ]
   },
   {
+    id: "environmental",
     title: "Earth Science Projects",
     description: "Environmental and engineering geophysics for sustainable development.",
     icon: Leaf,
     category: "Environmental",
+    fullDescription: "Address critical environmental and engineering challenges with our specialized geophysics expertise.",
     features: [
       "Hydrogeological Assessments",
       "Environmental Site Characterization",
       "Geotechnical Investigations",
-      "Natural Hazard Mapping"
+      "Natural Hazard Mapping",
+      "Carbon Storage Monitoring",
+      "Permafrost & Geohazard Studies"
     ]
   }
 ];
@@ -101,7 +117,7 @@ export default function Services() {
                 <div className="space-y-4 mb-12">
                   <h4 className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/40 mb-6">Key Capabilities</h4>
                   <ul className="grid gap-4">
-                    {service.features.map((feature, fIndex) => (
+                    {service.features.slice(0, 4).map((feature, fIndex) => (
                       <li key={fIndex} className="flex items-center space-x-3 text-[11px] uppercase tracking-widest font-bold text-white/70">
                         <ChevronRight className="h-3 w-3 text-accent" />
                         <span>{feature}</span>
@@ -111,8 +127,8 @@ export default function Services() {
                 </div>
 
                 <Button asChild className="w-full bg-white text-deep-slate hover:bg-white/90 rounded-none py-8 text-xs font-black uppercase tracking-[0.3em]">
-                  <Link to="/contact">
-                    REQUEST QUOTE ▸
+                  <Link to={`/services/${service.id}`}>
+                    Learn More ▸
                   </Link>
                 </Button>
               </motion.div>

@@ -13,6 +13,8 @@ const projects = [
   {
     title: "Regional Seismic Interpretation",
     category: "Oil & Gas",
+    year: "2024",
+    location: "Gulf of Mexico",
     problem: "Identifying potential hydrocarbon traps in a structurally complex offshore basin with poor signal-to-noise ratio.",
     methodology: "Applied advanced post-stack noise reduction and attribute analysis (Coherence, RMS Amplitude) to delineate fault systems and stratigraphic traps.",
     beforeImage: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=1000",
@@ -21,6 +23,8 @@ const projects = [
   {
     title: "AI-Driven Mineral Mapping",
     category: "Mining",
+    year: "2024",
+    location: "Australia - Pilbara Region",
     problem: "Traditional mapping techniques were too slow for a 5,000 sq km exploration block in rugged terrain.",
     methodology: "Trained a Convolutional Neural Network (CNN) on multi-spectral satellite imagery and airborne magnetic data to predict copper-gold porphyry signatures.",
     beforeImage: "https://images.unsplash.com/photo-1576085898323-218337e3e43c?auto=format&fit=crop&q=80&w=1000",
@@ -29,10 +33,62 @@ const projects = [
   {
     title: "Groundwater Resource Assessment",
     category: "Environmental",
+    year: "2024",
+    location: "Sub-Saharan Africa",
     problem: "Locating sustainable aquifers for a drought-stricken agricultural region with high salinity risks.",
     methodology: "Conducted integrated Electrical Resistivity Tomography (ERT) and Transient Electromagnetic (TEM) surveys to map freshwater-saltwater interfaces.",
     beforeImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&q=80&w=1000",
     afterImage: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1000",
+  },
+  {
+    title: "Deep Marine Seismic Survey",
+    category: "Oil & Gas",
+    year: "2024",
+    location: "North Sea - UK Block",
+    problem: "Ultra-deep water exploration with complex velocity models and salt tectonics affecting imaging quality.",
+    methodology: "Implemented full waveform inversion (FWI) and reverse time migration (RTM) to create high-resolution velocity models for sub-salt imaging.",
+    beforeImage: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=1000",
+    afterImage: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=1000",
+  },
+  {
+    title: "Lithium Deposit Detection",
+    category: "Mining",
+    year: "2024",
+    location: "South America - Atacama Desert",
+    problem: "Identifying subsurface lithium-rich brine deposits in a complex evaporite sequence.",
+    methodology: "Combined gravity, magnetic, and induced polarization surveys with machine learning classification to map lithium-rich zones with high precision.",
+    beforeImage: "https://images.unsplash.com/photo-1576085898323-218337e3e43c?auto=format&fit=crop&q=80&w=1000",
+    afterImage: "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=1000",
+  },
+  {
+    title: "Carbon Sequestration Monitoring",
+    category: "Environmental",
+    year: "2024",
+    location: "Middle East - CCS Project",
+    problem: "Real-time monitoring of injected CO2 plume migration in deep saline aquifers.",
+    methodology: "Time-lapse 4D seismic acquisition with advanced inversion techniques to track CO2 saturation and pressure changes.",
+    beforeImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&q=80&w=1000",
+    afterImage: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=1000",
+  },
+  {
+    title: "Offshore Geotechnical Survey",
+    category: "Engineering",
+    year: "2024",
+    location: "Southeast Asia - Renewable Energy Zone",
+    problem: "Site characterization for offshore wind farm foundations in complex geological settings.",
+    methodology: "High-resolution multibeam bathymetry, sub-bottom profiling, and cone penetrometer testing to assess seabed stability.",
+    beforeImage: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=1000",
+    afterImage: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&q=80&w=1000",
+  },
+  {
+    title: "Rare Earth Element Exploration",
+    category: "Mining",
+    year: "2024",
+    location: "Canada - Arctic Region",
+    problem: "Locating REE deposits beneath thick permafrost and glacial cover.",
+    methodology: "Airborne electromagnetics combined with high-sensitivity magnetometry and deep drilling to characterize rare earth mineralization.",
+    beforeImage: "https://images.unsplash.com/photo-1576085898323-218337e3e43c?auto=format&fit=crop&q=80&w=1000",
+    afterImage: "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=1000",
   }
 ];
 
@@ -73,26 +129,30 @@ export default function Portfolio() {
                 <SwiperSlide key={index}>
                   <div className="grid lg:grid-cols-12 gap-0">
                     {/* Content Side */}
-                    <div className="lg:col-span-5 p-12 lg:p-20 border-r border-white/10">
-                      <div className="editorial-label text-accent mb-8">{project.category}</div>
-                      <h2 className="text-4xl font-black uppercase tracking-tight mb-12 leading-none">
+                    <div className="lg:col-span-5 p-8 lg:p-16 border-r border-white/10 overflow-y-auto max-h-[600px]">
+                      <div className="editorial-label text-accent mb-4">{project.category}</div>
+                      <div className="flex flex-col gap-2 mb-6 text-xs text-white/50">
+                        <span>📍 {project.location}</span>
+                        <span>📅 {project.year}</span>
+                      </div>
+                      <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tight mb-8 leading-tight break-words">
                         {project.title}
                       </h2>
                       
-                      <div className="space-y-12">
+                      <div className="space-y-10">
                         <section>
-                          <h4 className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/40 mb-4 flex items-center">
-                            <ChevronRight className="h-3 w-3 mr-2 text-accent" />
+                          <h4 className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/40 mb-3 flex items-center">
+                            <ChevronRight className="h-3 w-3 mr-2 text-accent flex-shrink-0" />
                             Problem Statement
                           </h4>
-                          <p className="text-sm text-white/60 font-light leading-relaxed">{project.problem}</p>
+                          <p className="text-xs text-white/60 font-light leading-relaxed">{project.problem}</p>
                         </section>
                         <section>
-                          <h4 className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/40 mb-4 flex items-center">
-                            <ChevronRight className="h-3 w-3 mr-2 text-accent" />
+                          <h4 className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/40 mb-3 flex items-center">
+                            <ChevronRight className="h-3 w-3 mr-2 text-accent flex-shrink-0" />
                             Methodology
                           </h4>
-                          <p className="text-sm text-white/60 font-light leading-relaxed">{project.methodology}</p>
+                          <p className="text-xs text-white/60 font-light leading-relaxed">{project.methodology}</p>
                         </section>
                       </div>
                     </div>

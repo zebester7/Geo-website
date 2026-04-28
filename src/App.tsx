@@ -4,6 +4,7 @@ import { Footer } from "./components/Footer";
 import Home from "./pages/Home";
 import TalentPortal from "./pages/TalentPortal";
 import Services from "./pages/Services";
+import ServiceDetail from "./pages/ServiceDetail";
 import Portfolio from "./pages/Portfolio";
 import Consultancy from "./pages/Consultancy";
 import Contact from "./pages/Contact";
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/talent" element={<TalentPortal />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/services/:id" element={<ServiceDetail />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/consultancy" element={<Consultancy />} />
           <Route path="/contact" element={<Contact />} />

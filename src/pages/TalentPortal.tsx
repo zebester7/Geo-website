@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, Filter, FileText, Download, Eye } from "lucide-react";
+import { Search, Filter, FileText, Download, Eye, Upload, CheckCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { db, OperationType, handleFirestoreError } from "@/lib/firebase";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, addDoc, Timestamp } from "firebase/firestore";
 
 const allTags = ["Seismic", "GIS", "Gravity", "Magnetic", "Machine Learning", "AI"];
 
@@ -16,6 +16,11 @@ export default function TalentPortal() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCVUpload, setShowCVUpload] = useState(false);
+  const [cvName, setCvName] = useState("");
+  const [cvEmail, setCvEmail] = useState("");
+  const [cvFile, setCvFile] = useState<File | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success">("idle");
 
   useEffect(() => {
     const studentsCol = collection(db, "students");
@@ -34,6 +39,40 @@ export default function TalentPortal() {
     setSelectedTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
+  };
+
+  const handleCVUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!cvFile || !cvName || !cvEmail) {
+      alert("Please fill all fields and select a file");
+      return;
+    }
+
+    setUploadStatus("uploading");
+    try {
+      // In production, upload file to Firebase Storage
+      // For now, store metadata in Firestore
+      await addDoc(collection(db, "cv-submissions"), {
+        name: cvName,
+        email: cvEmail,
+        fileName: cvFile.name,
+        fileSize: cvFile.size,
+        submittedAt: Timestamp.now(),
+        status: "pending"
+      });
+      
+      setUploadStatus("success");
+      setTimeout(() => {
+        setCvName("");
+        setCvEmail("");
+        setCvFile(null);
+        setShowCVUpload(false);
+        setUploadStatus("idle");
+      }, 2000);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, "cv-submissions");
+      setUploadStatus("idle");
+    }
   };
 
   const filteredStudents = students.filter((student) => {
@@ -60,6 +99,79 @@ export default function TalentPortal() {
               <h1 className="text-EDITORIAL-HERO text-6xl font-black uppercase tracking-tighter mb-12">
                 GRADUATE<br />PORTFOLIO
               </h1>
+
+              {/* CV Upload Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-16 p-8 border border-accent/30 bg-accent/5"
+              >
+                {!showCVUpload ? (
+                  <Button 
+                    onClick={() => setShowCVUpload(true)}
+                    className="w-full bg-accent hover:bg-accent/90 text-white rounded-none py-6 text-xs font-black uppercase tracking-[0.3em]"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Submit Your CV
+                  </Button>
+                ) : (
+                  <form onSubmit={handleCVUpload} className="space-y-4">
+                    <h3 className="text-lg font-bold uppercase tracking-tight mb-4">Submit Your CV</h3>
+                    <Input
+                      type="text"
+                      placeholder="Full Name"
+                      value={cvName}
+                      onChange={(e) => setCvName(e.target.value)}
+                      className="rounded-none bg-white/5 border-white/10"
+                      required
+                    />
+                    <Input
+                      type="email"
+                      placeholder="Email Address"
+                      value={cvEmail}
+                      onChange={(e) => setCvEmail(e.target.value)}
+                      className="rounded-none bg-white/5 border-white/10"
+                      required
+                    />
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={(e) => setCvFile(e.target.files?.[0] || null)}
+                        className="hidden"
+                        id="cv-file"
+                        required
+                      />
+                      <label htmlFor="cv-file" className="block p-3 border-2 border-dashed border-white/20 cursor-pointer hover:border-accent transition-colors text-center">
+                        <FileText className="h-5 w-5 mx-auto mb-2 text-accent" />
+                        <span className="text-sm text-white/60">{cvFile ? cvFile.name : "Select PDF or DOC"}</span>
+                      </label>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <Button 
+                        type="button"
+                        onClick={() => {
+                          setShowCVUpload(false);
+                          setCvFile(null);
+                        }}
+                        variant="outline"
+                        className="rounded-none"
+                      >
+                        Cancel
+                      </Button>
+                      <Button 
+                        type="submit"
+                        disabled={uploadStatus === "uploading"}
+                        className="rounded-none bg-accent hover:bg-accent/90"
+                      >
+                        {uploadStatus === "uploading" && "Uploading..."}
+                        {uploadStatus === "success" && <CheckCircle className="mr-2 h-4 w-4" />}
+                        {uploadStatus === "idle" && "Upload"}
+                      </Button>
+                    </div>
+                  </form>
+                )}
+              </motion.div>
               
               <div className="grid gap-8 sm:grid-cols-2">
                 {filteredStudents.map((student) => (

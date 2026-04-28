@@ -23,7 +23,7 @@ export function Navbar() {
       <div className="container mx-auto flex h-20 items-center justify-between px-4 lg:px-10">
         <Link to="/" className="flex items-center">
           <span className="text-lg font-extrabold tracking-[0.2em] text-white uppercase">
-            TERRA<span className="text-accent">INSIGHTS</span>
+            GEOTECH<span className="text-accent"> SOLUTIONS</span>
           </span>
         </Link>
 
