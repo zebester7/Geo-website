@@ -6,7 +6,7 @@ import { useEffect, useState, useRef } from "react";
 import { seedDatabase } from "@/lib/seed";
 import { db, OperationType, handleFirestoreError } from "@/lib/firebase";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
-import CustomCursor from "@/components/Cursor";  // ✅ ADD THIS IMPORT
+import CustomCursor from "@/components/Cursor";
 
 // Counter animation hook
 function useCountUp(target: number, duration: number, start: boolean) {
@@ -282,12 +282,9 @@ export default function Home() {
                 ))}
               </div>
             </motion.footer>
-284 |     </motion.footer>
-285 | 
-286 |     </div>
-287 |   </div>
-288 |  </div>
-289 | </div>
-290 | </>
-291 | );
-292 | }
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
