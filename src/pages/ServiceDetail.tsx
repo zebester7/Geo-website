@@ -162,101 +162,102 @@ export default function ServiceDetail() {
     <>
       <CustomCursor color="#D35400" size={32} trailing={true} />
       <div className="relative min-h-screen">
-      <div className="grid-bg absolute inset-0 pointer-events-none" />
-      
-      <div className="container mx-auto px-4 lg:px-10 relative z-10">
-        <div className="border-x border-white/10 min-h-screen py-20">
-          {/* Header */}
-          <header className="mb-20 px-10">
-            <Button asChild variant="outline" className="mb-8 rounded-none border-white/20 uppercase tracking-widest text-[10px] font-bold h-10 px-6">
-              <Link to="/services">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Services
-              </Link>
-            </Button>
-            
-            <div className="editorial-label text-accent mb-6">{service.category}</div>
-            <h1 className="text-6xl font-black uppercase tracking-tighter mb-8">
-              {service.title}
-            </h1>
-            <p className="text-lg text-white/60 font-light leading-relaxed max-w-3xl">
-              {service.fullDescription}
-            </p>
-          </header>
-
-          <div className="px-10 space-y-20">
-            {/* Key Features */}
-            <section>
-              <h2 className="text-3xl font-black uppercase tracking-tight mb-12">Core Capabilities</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {service.features.map((feature: string, i: number) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.05 }}
-                    className="flex items-start gap-4 p-6 border border-white/10 bg-white/5 hover:border-accent/50 transition-colors"
-                  >
-                    <CheckCircle2 className="h-5 w-5 text-accent flex-shrink-0 mt-1" />
-                    <span className="text-white/80 font-light">{feature}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </section>
-
-            {/* Benefits */}
-            <section>
-              <h2 className="text-3xl font-black uppercase tracking-tight mb-12">Key Benefits</h2>
-              <ul className="space-y-4">
-                {service.benefits.map((benefit: string, i: number) => (
-                  <motion.li
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.05 }}
-                    className="flex items-center gap-4 text-white/70 group cursor-pointer hover:text-white transition-colors"
-                  >
-                    <ChevronRight className="h-4 w-4 text-accent flex-shrink-0 group-hover:translate-x-1 transition-transform" />
-                    <span>{benefit}</span>
-                  </motion.li>
-                ))}
-              </ul>
-            </section>
-
-            {/* Applications */}
-            <section>
-              <h2 className="text-3xl font-black uppercase tracking-tight mb-12">Applications</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {service.applications.map((app: string, i: number) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.05 }}
-                    className="p-8 border border-white/10 bg-gradient-to-br from-white/5 to-white/0 hover:border-accent/50 transition-colors group"
-                  >
-                    <h3 className="text-white font-bold mb-2 group-hover:text-accent transition-colors">{app}</h3>
-                    <div className="h-1 w-0 bg-accent group-hover:w-full transition-all duration-300" />
-                  </motion.div>
-                ))}
-              </div>
-            </section>
-
-            {/* CTA */}
-            <section className="mt-20 p-12 lg:p-20 border border-white/10 bg-white/5 text-center">
-              <h2 className="text-3xl font-black uppercase tracking-tight mb-6">Ready to get started?</h2>
-              <p className="text-white/60 font-light mb-12 max-w-2xl mx-auto">
-                Contact our team of experts to discuss how {service.title} can address your specific needs.
-              </p>
-              <Button asChild className="bg-accent hover:bg-accent/90 text-white rounded-none py-8 px-12 text-xs font-black uppercase tracking-[0.3em]">
-                <Link to="/contact">
-                  REQUEST CONSULTATION <ArrowRight className="ml-2 h-4 w-4" />
+        <div className="grid-bg absolute inset-0 pointer-events-none" />
+        
+        <div className="container mx-auto px-4 lg:px-10 relative z-10">
+          <div className="border-x border-white/10 min-h-screen py-20">
+            {/* Header */}
+            <header className="mb-20 px-10">
+              <Button asChild variant="outline" className="mb-8 rounded-none border-white/20 uppercase tracking-widest text-[10px] font-bold h-10 px-6">
+                <Link to="/services">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Services
                 </Link>
               </Button>
-            </section>
+              
+              <div className="editorial-label text-accent mb-6">{service.category}</div>
+              <h1 className="text-6xl font-black uppercase tracking-tighter mb-8">
+                {service.title}
+              </h1>
+              <p className="text-lg text-white/60 font-light leading-relaxed max-w-3xl">
+                {service.fullDescription}
+              </p>
+            </header>
+
+            <div className="px-10 space-y-20">
+              {/* Key Features */}
+              <section>
+                <h2 className="text-3xl font-black uppercase tracking-tight mb-12">Core Capabilities</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {service.features.map((feature: string, i: number) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.05 }}
+                      className="flex items-start gap-4 p-6 border border-white/10 bg-white/5 hover:border-accent/50 transition-colors"
+                    >
+                      <CheckCircle2 className="h-5 w-5 text-accent flex-shrink-0 mt-1" />
+                      <span className="text-white/80 font-light">{feature}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Benefits */}
+              <section>
+                <h2 className="text-3xl font-black uppercase tracking-tight mb-12">Key Benefits</h2>
+                <ul className="space-y-4">
+                  {service.benefits.map((benefit: string, i: number) => (
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.05 }}
+                      className="flex items-center gap-4 text-white/70 group cursor-pointer hover:text-white transition-colors"
+                    >
+                      <ChevronRight className="h-4 w-4 text-accent flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+                      <span>{benefit}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </section>
+
+              {/* Applications */}
+              <section>
+                <h2 className="text-3xl font-black uppercase tracking-tight mb-12">Applications</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {service.applications.map((app: string, i: number) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.05 }}
+                      className="p-8 border border-white/10 bg-gradient-to-br from-white/5 to-white/0 hover:border-accent/50 transition-colors group"
+                    >
+                      <h3 className="text-white font-bold mb-2 group-hover:text-accent transition-colors">{app}</h3>
+                      <div className="h-1 w-0 bg-accent group-hover:w-full transition-all duration-300" />
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+
+              {/* CTA */}
+              <section className="mt-20 p-12 lg:p-20 border border-white/10 bg-white/5 text-center">
+                <h2 className="text-3xl font-black uppercase tracking-tight mb-6">Ready to get started?</h2>
+                <p className="text-white/60 font-light mb-12 max-w-2xl mx-auto">
+                  Contact our team of experts to discuss how {service.title} can address your specific needs.
+                </p>
+                <Button asChild className="bg-accent hover:bg-accent/90 text-white rounded-none py-8 px-12 text-xs font-black uppercase tracking-[0.3em]">
+                  <Link to="/contact">
+                    REQUEST CONSULTATION <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </section>
+            </div>
           </div>
         </div>
       </div>
