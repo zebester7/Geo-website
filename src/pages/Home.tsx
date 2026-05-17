@@ -283,6 +283,7 @@ export default function Home() {
               </div>
             </motion.footer>
 
+            </div>
           </div>
         </div>
       </div>

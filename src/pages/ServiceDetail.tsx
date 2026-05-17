@@ -258,6 +258,7 @@ export default function ServiceDetail() {
                 </Button>
               </section>
             </div>
+            </div>
           </div>
         </div>
       </div>

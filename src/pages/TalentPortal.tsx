@@ -275,6 +275,7 @@ export default function TalentPortal() {
                 </div>
               </div>
             </aside>
+            </div>
           </div>
         </div>
       </div>
