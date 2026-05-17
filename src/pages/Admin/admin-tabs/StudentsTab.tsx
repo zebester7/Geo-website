@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit2, Trash2, X, Loader } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Loader, GraduationCap } from 'lucide-react';
 import { studentDB, Student } from '@/lib/database';
 
 interface StudentsTabProps {
@@ -11,7 +10,7 @@ interface StudentsTabProps {
   isAdmin: boolean;
 }
 
-interface FormData {
+interface StudentFormData {
   name: string;
   rollNumber: string;
   batch: string;
@@ -19,7 +18,7 @@ interface FormData {
   status: 'active' | 'inactive' | 'graduated';
 }
 
-const defaultForm: FormData = {
+const defaultStudentForm: StudentFormData = {
   name: '',
   rollNumber: '',
   batch: '',
@@ -29,22 +28,20 @@ const defaultForm: FormData = {
 
 export default function StudentsTab({ userId, isAdmin }: StudentsTabProps) {
   const [students, setStudents] = useState<Student[]>([]);
-  const [formData, setFormData] = useState<FormData>(defaultForm);
+  const [formData, setFormData] = useState<StudentFormData>(defaultStudentForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive' | 'graduated'>('all');
+  const [filter, setFilter] = useState<string>('all');
 
-  // Subscribe to user's students (or all if admin)
+  // Subscribe to students
   useEffect(() => {
-    if (isAdmin) {
-      studentDB.getAllStudents().then(setStudents).catch(console.error);
-    } else {
-      const unsubscribe = studentDB.subscribeToUserStudents(userId, setStudents);
-      return () => unsubscribe();
-    }
+    const unsubscribe = isAdmin
+      ? studentDB.subscribeToAllStudents(setStudents)
+      : studentDB.subscribeToUserStudents(userId, setStudents);
+    return () => unsubscribe();
   }, [userId, isAdmin]);
 
   const handleInputChange = (
@@ -55,7 +52,7 @@ export default function StudentsTab({ userId, isAdmin }: StudentsTabProps) {
   };
 
   const resetForm = () => {
-    setFormData(defaultForm);
+    setFormData(defaultStudentForm);
     setEditingId(null);
     setShowForm(false);
   };
@@ -73,8 +70,8 @@ export default function StudentsTab({ userId, isAdmin }: StudentsTabProps) {
   };
 
   const handleSaveStudent = async () => {
-    if (!formData.name.trim() || !formData.rollNumber.trim()) {
-      setError('Name and roll number are required');
+    if (!formData.name.trim() || !formData.rollNumber.trim() || !formData.department.trim()) {
+      setError('Name, roll number, and department are required');
       return;
     }
 
@@ -85,8 +82,14 @@ export default function StudentsTab({ userId, isAdmin }: StudentsTabProps) {
     try {
       if (editingId) {
         // Update existing student
-        await studentDB.updateStudent(editingId, formData);
-        setSuccess('Student record updated successfully!');
+        await studentDB.updateStudent(editingId, {
+          name: formData.name,
+          rollNumber: formData.rollNumber,
+          batch: formData.batch,
+          department: formData.department,
+          status: formData.status,
+        });
+        setSuccess('Student updated successfully!');
       } else {
         // Create new student
         await studentDB.createStudent(
@@ -97,13 +100,13 @@ export default function StudentsTab({ userId, isAdmin }: StudentsTabProps) {
           userId,
           formData.status
         );
-        setSuccess('Student record created successfully!');
+        setSuccess('Student created successfully!');
       }
 
       resetForm();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
-      setError(err.message || 'Failed to save student record');
+      setError(err.message || 'Failed to save student');
     } finally {
       setLoading(false);
     }
@@ -115,32 +118,18 @@ export default function StudentsTab({ userId, isAdmin }: StudentsTabProps) {
     setLoading(true);
     try {
       await studentDB.deleteStudent(studentId);
-      setSuccess('Student record deleted successfully!');
+      setSuccess('Student deleted successfully!');
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
-      setError(err.message || 'Failed to delete student record');
+      setError(err.message || 'Failed to delete student');
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredStudents = students.filter((student) => {
-    if (filterStatus === 'all') return true;
-    return student.status === filterStatus;
-  });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-500/20 text-green-400';
-      case 'inactive':
-        return 'bg-yellow-500/20 text-yellow-400';
-      case 'graduated':
-        return 'bg-blue-500/20 text-blue-400';
-      default:
-        return 'bg-white/10 text-white/60';
-    }
-  };
+  const filteredStudents = filter === 'all' 
+    ? students 
+    : students.filter(s => s.status === filter);
 
   return (
     <div className="space-y-6">
@@ -168,83 +157,81 @@ export default function StudentsTab({ userId, isAdmin }: StudentsTabProps) {
             </button>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              {/* Name */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-widest text-white/60 mb-2">
-                  Full Name *
-                </label>
-                <Input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="bg-white/5 border-white/10 text-white"
-                  placeholder="Student name"
-                />
-              </div>
+            {/* Name */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-white/60 mb-2">
+                Full Name
+              </label>
+              <Input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="bg-white/5 border-white/10 text-white"
+                placeholder="Student full name"
+              />
+            </div>
 
-              {/* Roll Number */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-widest text-white/60 mb-2">
-                  Roll Number *
-                </label>
-                <Input
-                  type="text"
-                  name="rollNumber"
-                  value={formData.rollNumber}
-                  onChange={handleInputChange}
-                  className="bg-white/5 border-white/10 text-white"
-                  placeholder="e.g., 2024-001"
-                />
-              </div>
+            {/* Roll Number */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-white/60 mb-2">
+                Roll Number
+              </label>
+              <Input
+                type="text"
+                name="rollNumber"
+                value={formData.rollNumber}
+                onChange={handleInputChange}
+                className="bg-white/5 border-white/10 text-white"
+                placeholder="Student roll number"
+              />
+            </div>
 
-              {/* Batch */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-widest text-white/60 mb-2">
-                  Batch
-                </label>
-                <Input
-                  type="text"
-                  name="batch"
-                  value={formData.batch}
-                  onChange={handleInputChange}
-                  className="bg-white/5 border-white/10 text-white"
-                  placeholder="e.g., 2024-2028"
-                />
-              </div>
+            {/* Batch */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-white/60 mb-2">
+                Batch
+              </label>
+              <Input
+                type="text"
+                name="batch"
+                value={formData.batch}
+                onChange={handleInputChange}
+                className="bg-white/5 border-white/10 text-white"
+                placeholder="e.g., 2024-2028"
+              />
+            </div>
 
-              {/* Department */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-widest text-white/60 mb-2">
-                  Department
-                </label>
-                <Input
-                  type="text"
-                  name="department"
-                  value={formData.department}
-                  onChange={handleInputChange}
-                  className="bg-white/5 border-white/10 text-white"
-                  placeholder="e.g., Geology"
-                />
-              </div>
+            {/* Department */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-white/60 mb-2">
+                Department
+              </label>
+              <Input
+                type="text"
+                name="department"
+                value={formData.department}
+                onChange={handleInputChange}
+                className="bg-white/5 border-white/10 text-white"
+                placeholder="e.g., Computer Science"
+              />
+            </div>
 
-              {/* Status */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-widest text-white/60 mb-2">
-                  Status
-                </label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleInputChange}
-                  className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-accent"
-                >
-                  <option value="active" className="bg-deep-slate">Active</option>
-                  <option value="inactive" className="bg-deep-slate">Inactive</option>
-                  <option value="graduated" className="bg-deep-slate">Graduated</option>
-                </select>
-              </div>
+            {/* Status */}
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-widest text-white/60 mb-2">
+                Status
+              </label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleInputChange}
+                className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-accent"
+              >
+                <option value="active" className="bg-deep-slate">Active</option>
+                <option value="inactive" className="bg-deep-slate">Inactive</option>
+                <option value="graduated" className="bg-deep-slate">Graduated</option>
+              </select>
             </div>
 
             {/* Buttons */}
@@ -261,8 +248,8 @@ export default function StudentsTab({ userId, isAdmin }: StudentsTabProps) {
                   </>
                 ) : (
                   <>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Save Record
+                    <GraduationCap className="w-4 h-4 mr-2" />
+                    Save Student
                   </>
                 )}
               </Button>
@@ -278,125 +265,126 @@ export default function StudentsTab({ userId, isAdmin }: StudentsTabProps) {
         </Card>
       )}
 
-      {/* Filter and Action Bar */}
-      {!showForm && students.length > 0 && (
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex gap-2">
-            {['all', 'active', 'inactive', 'graduated'].map((status) => (
-              <button
-                key={status}
-                onClick={() => setFilterStatus(status as any)}
-                className={`px-3 py-1 text-xs font-bold uppercase rounded transition-colors ${
-                  filterStatus === status
-                    ? 'bg-accent text-white'
-                    : 'bg-white/10 text-white/60 hover:bg-white/20'
-                }`}
-              >
-                {status === 'all' ? 'All' : status}
-              </button>
-            ))}
-          </div>
-          <Button
-            onClick={() => setShowForm(true)}
-            className="bg-accent text-white hover:bg-accent/90 rounded text-xs font-bold uppercase tracking-wider"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Student
-          </Button>
-        </div>
-      )}
-
-      {/* Students Table */}
-      {students.length === 0 ? (
+      {/* Students List */}
+      {students.length === 0 && !showForm ? (
         <Card className="bg-white/5 border-white/10">
           <CardContent className="py-12 text-center">
-            <p className="text-white/60 text-sm mb-4">No student records yet. Add your first student!</p>
+            <p className="text-white/60 text-sm mb-4">No students yet. Add your first student!</p>
+            <Button
+              onClick={() => setShowForm(true)}
+              className="bg-accent text-white hover:bg-accent/90 rounded text-xs font-bold uppercase tracking-wider"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Student
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          {/* Stats Bar */}
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             {!showForm && (
               <Button
                 onClick={() => setShowForm(true)}
                 className="bg-accent text-white hover:bg-accent/90 rounded text-xs font-bold uppercase tracking-wider"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add Student
+                Add New Student
               </Button>
             )}
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="bg-white/5 border-white/10 overflow-x-auto">
-          <Table>
-            <TableHeader className="bg-white/5">
-              <TableRow className="border-white/10 hover:bg-transparent">
-                <TableHead className="text-xs font-bold uppercase tracking-widest text-white/60 py-4">
-                  Name
-                </TableHead>
-                <TableHead className="text-xs font-bold uppercase tracking-widest text-white/60 py-4">
-                  Roll Number
-                </TableHead>
-                <TableHead className="text-xs font-bold uppercase tracking-widest text-white/60 py-4">
-                  Batch
-                </TableHead>
-                <TableHead className="text-xs font-bold uppercase tracking-widest text-white/60 py-4">
-                  Department
-                </TableHead>
-                <TableHead className="text-xs font-bold uppercase tracking-widest text-white/60 py-4">
-                  Status
-                </TableHead>
-                <TableHead className="text-xs font-bold uppercase tracking-widest text-white/60 py-4 text-right">
-                  Actions
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredStudents.map((student) => (
-                <TableRow key={student.id} className="border-white/10 hover:bg-white/5 transition-colors">
-                  <TableCell className="py-4 font-bold text-white">{student.name}</TableCell>
-                  <TableCell className="py-4 text-white/80">{student.rollNumber}</TableCell>
-                  <TableCell className="py-4 text-white/80">{student.batch}</TableCell>
-                  <TableCell className="py-4 text-white/80">{student.department}</TableCell>
-                  <TableCell className="py-4">
-                    <span className={`px-3 py-1 rounded text-xs font-bold uppercase ${getStatusColor(student.status)}`}>
-                      {student.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="py-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        onClick={() => handleEditStudent(student)}
-                        className="p-2 text-white/60 hover:text-white transition"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteStudent(student.id)}
-                        className="p-2 text-white/60 hover:text-red-400 transition"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
-      )}
 
-      {/* Stats */}
-      {students.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Total', count: students.length, color: 'text-white' },
-            { label: 'Active', count: students.filter((s) => s.status === 'active').length, color: 'text-green-400' },
-            { label: 'Inactive', count: students.filter((s) => s.status === 'inactive').length, color: 'text-yellow-400' },
-            { label: 'Graduated', count: students.filter((s) => s.status === 'graduated').length, color: 'text-blue-400' },
-          ].map((stat) => (
-            <div key={stat.label} className="p-4 bg-white/5 border border-white/10 rounded text-center">
-              <div className={`text-2xl font-bold mb-1 ${stat.color}`}>{stat.count}</div>
-              <p className="text-xs uppercase tracking-widest text-white/60">{stat.label}</p>
+            {/* Filter Buttons */}
+            <div className="flex gap-2">
+              {['all', 'active', 'inactive', 'graduated'].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setFilter(status)}
+                  className={`px-3 py-1 rounded text-xs font-bold uppercase transition-colors ${
+                    filter === status
+                      ? 'bg-accent/20 text-accent'
+                      : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
+            {[
+              { label: 'Total', value: students.length },
+              { label: 'Active', value: students.filter(s => s.status === 'active').length },
+              { label: 'Inactive', value: students.filter(s => s.status === 'inactive').length },
+              { label: 'Graduated', value: students.filter(s => s.status === 'graduated').length },
+            ].map((stat) => (
+              <Card key={stat.label} className="bg-white/5 border-white/10">
+                <CardContent className="py-4 text-center">
+                  <p className="text-2xl font-bold">{stat.value}</p>
+                  <p className="text-xs text-white/60 uppercase tracking-wider">{stat.label}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Students Table */}
+          <Card className="bg-white/5 border-white/10">
+            <CardContent className="p-0">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-white/60">Name</th>
+                    <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-white/60">Roll No.</th>
+                    <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-white/60 hidden md:table-cell">Department</th>
+                    <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-white/60 hidden md:table-cell">Batch</th>
+                    <th className="text-left p-4 text-xs font-bold uppercase tracking-wider text-white/60">Status</th>
+                    <th className="text-right p-4 text-xs font-bold uppercase tracking-wider text-white/60">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredStudents.map((student) => (
+                    <tr key={student.id} className="border-b border-white/5 hover:bg-white/5">
+                      <td className="p-4 text-sm font-medium">{student.name}</td>
+                      <td className="p-4 text-sm text-white/80">{student.rollNumber}</td>
+                      <td className="p-4 text-sm text-white/80 hidden md:table-cell">{student.department}</td>
+                      <td className="p-4 text-sm text-white/80 hidden md:table-cell">{student.batch}</td>
+                      <td className="p-4">
+                        <span
+                          className={`text-xs font-bold uppercase px-2 py-1 rounded ${
+                            student.status === 'active'
+                              ? 'bg-green-500/20 text-green-400'
+                              : student.status === 'inactive'
+                              ? 'bg-yellow-500/20 text-yellow-400'
+                              : 'bg-blue-500/20 text-blue-400'
+                          }`}
+                        >
+                          {student.status}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={() => handleEditStudent(student)}
+                            className="p-2 text-white/60 hover:text-white transition"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteStudent(student.id)}
+                            className="p-2 text-white/60 hover:text-red-400 transition"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </CardContent>
+          </Card>
+        </>
       )}
     </div>
   );

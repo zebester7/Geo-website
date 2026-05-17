@@ -236,7 +236,7 @@ export default function ProfileTab({ userProfile }: ProfileTabProps) {
       <div className="flex gap-4">
         <Button
           onClick={handleSave}
-          disabled={loading || (!profilePic && !cvFile && formData === { fullName: userProfile.fullName, bio: userProfile.bio })}
+          disabled={loading}
           className="bg-accent text-white hover:bg-accent/90 rounded uppercase text-xs font-bold tracking-wider h-10 px-6 flex items-center gap-2"
         >
           {loading ? <Loader className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
