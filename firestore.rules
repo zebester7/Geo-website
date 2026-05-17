@@ -2,27 +2,19 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // ===============================================================
-    // Assumed Data Model
+    // Data Model
     // ===============================================================
-    //
-    // Collection: students
-    // Fields: name (string), gpa (string), cvUrl (string), photoUrl (string), 
-    //         tags (list), bio (string), graduationDate (string), isTopScorer (bool)
-    //
-    // Collection: services
-    // Fields: title (string), description (string), category (string), icon (string)
+    // Collection: users
+    //   uid (doc id), email, fullName, role (admin|editor), bio, 
+    //   profilePicUrl, cvUrl, createdAt, updatedAt, isActive
     //
     // Collection: projects
-    // Fields: title (string), category (string), problem (string), methodology (string), 
-    //         beforeImageUrl (string), afterImageUrl (string)
+    //   id (doc id), title, description, imageUrl, teamMembers (array),
+    //   createdBy (uid), createdAt, updatedAt, status (draft|published)
     //
-    // Collection: bookings
-    // Fields: clientName (string), clientEmail (string), serviceType (string), 
-    //         date (timestamp), notes (string), status (string)
-    //
-    // Collection: leads
-    // Fields: name (string), email (string), subject (string), message (string), createdAt (timestamp)
-    //
+    // Collection: students
+    //   id (doc id), name, rollNumber, batch, department, status,
+    //   managedBy (uid), createdAt, updatedAt
     // ===============================================================
 
     // ===============================================================
@@ -33,10 +25,24 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
     function isAdmin() {
-      return isAuthenticated() && 
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
-         (request.auth.token.email == "zubairahmadisb7p2@gmail.com" && request.auth.token.email_verified == true));
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+
+    function isEditor() {
+      return isAuthenticated() && (getUserRole() == 'editor' || isAdmin());
+    }
+
+    function isOwnDocument(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocumentOwner(createdByField) {
+      return isAuthenticated() && resource.data[createdByField] == request.auth.uid;
     }
 
     function isValidEmail(email) {
@@ -44,43 +50,83 @@ service cloud.firestore {
     }
 
     // ===============================================================
-    // Rules
+    // Users Collection - Profile Management
     // ===============================================================
-
-    // Students, Services, Projects: Public Read, Admin Write
-    match /students/{studentId} {
-      allow read: if true;
-      allow write: if isAdmin();
+    match /users/{userId} {
+      // Read: Users can read their own profile; Admins can read all
+      allow read: if isOwnDocument(userId) || isAdmin();
+      
+      // Create: Editors can create their own profile on signup
+      allow create: if isOwnDocument(userId) && request.auth.token.email_verified;
+      
+      // Update: Users can update their own profile (except role); Admins can update all
+      allow update: if isOwnDocument(userId) && 
+                       (!('role' in request.resource.data) || request.resource.data.role == resource.data.role) ||
+                       isAdmin();
+      
+      // Delete: Only Admins can delete
+      allow delete: if isAdmin();
     }
 
+    // ===============================================================
+    // Projects Collection - RBAC with Ownership
+    // ===============================================================
+    match /projects/{projectId} {
+      // Read: Anyone can read published projects; Editors can read their own drafts
+      allow read: if resource.data.status == 'published' || 
+                     isDocumentOwner('createdBy') ||
+                     isAdmin();
+      
+      // Create: Editors can create projects
+      allow create: if isEditor() && 
+                       request.resource.data.createdBy == request.auth.uid &&
+                       request.resource.data.createdAt == request.time;
+      
+      // Update: Owner can update their own; Admins can update all
+      allow update: if isDocumentOwner('createdBy') || isAdmin();
+      
+      // Delete: Owner can delete their own; Admins can delete all
+      allow delete: if isDocumentOwner('createdBy') || isAdmin();
+    }
+
+    // ===============================================================
+    // Students Collection - RBAC with Ownership
+    // ===============================================================
+    match /students/{studentId} {
+      // Read: Editor can read students they manage; Admin can read all
+      allow read: if resource.data.managedBy == request.auth.uid || isAdmin();
+      
+      // Create: Editors can create student records
+      allow create: if isEditor() && 
+                       request.resource.data.managedBy == request.auth.uid &&
+                       request.resource.data.createdAt == request.time;
+      
+      // Update: Manager can update; Admins can update all
+      allow update: if resource.data.managedBy == request.auth.uid || isAdmin();
+      
+      // Delete: Manager can delete; Admins can delete all
+      allow delete: if resource.data.managedBy == request.auth.uid || isAdmin();
+    }
+
+    // ===============================================================
+    // Public Collections (Read-only for public pages)
+    // ===============================================================
     match /services/{serviceId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    match /projects/{projectId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-
-    // Bookings: Public Create, Admin Read/Update/Delete
     match /bookings/{bookingId} {
-      allow create: if request.resource.data.keys().hasAll(['clientName', 'clientEmail', 'serviceType', 'date']) &&
-                      isValidEmail(request.resource.data.clientEmail);
-      allow read, update, delete: if isAdmin();
+      allow read: if true;
+      allow create: if true;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
     }
 
-    // Leads: Public Create, Admin Read/Update/Delete
     match /leads/{leadId} {
-      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'message']) &&
-                      isValidEmail(request.resource.data.email);
-      allow read, update, delete: if isAdmin();
-    }
-
-    // User profiles (for admin role check)
-    match /users/{userId} {
-      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
-      allow write: if isAdmin();
+      allow read: if isAdmin();
+      allow create: if true;
+      allow delete: if isAdmin();
     }
   }
 }
