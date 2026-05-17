@@ -282,11 +282,12 @@ export default function Home() {
                 ))}
               </div>
             </motion.footer>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
+284 |     </motion.footer>
+285 | 
+286 |     </div>
+287 |   </div>
+288 |  </div>
+289 | </div>
+290 | </>
+291 | );
+292 | }
