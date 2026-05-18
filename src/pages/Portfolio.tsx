@@ -98,112 +98,112 @@ export default function Portfolio() {
     <>
       <CustomCursor color="#D35400" size={32} trailing={true} />
       <div className="relative min-h-screen">
-      <div className="grid-bg absolute inset-0 pointer-events-none" />
-      
-      <div className="container mx-auto px-4 lg:px-10 relative z-10">
-        <div className="border-x border-white/10 min-h-screen py-20">
-          <header className="mb-20 px-10">
-            <div className="editorial-label text-accent mb-6">Case Studies</div>
-            <h1 className="text-EDITORIAL-HERO text-6xl font-black uppercase tracking-tighter">
-              PROJECT<br />SHOWCASE
-            </h1>
-          </header>
+        <div className="grid-bg absolute inset-0 pointer-events-none" />
+        
+        <div className="container mx-auto px-4 lg:px-10 relative z-10">
+          <div className="border-x border-white/10 min-h-screen py-20">
+            <header className="mb-20 px-10">
+              <div className="editorial-label text-accent mb-6">Case Studies</div>
+              <h1 className="text-EDITORIAL-HERO text-6xl font-black uppercase tracking-tighter">
+                PROJECT<br />SHOWCASE
+              </h1>
+            </header>
 
-          <div className="relative px-10">
-            <Swiper
-              modules={[Navigation, Pagination, Autoplay, EffectFade]}
-              effect="fade"
-              spaceBetween={0}
-              slidesPerView={1}
-              navigation={{
-                nextEl: '.swiper-button-next-custom',
-                prevEl: '.swiper-button-prev-custom',
-              }}
-              pagination={{ 
-                clickable: true,
-                renderBullet: (index, className) => {
-                  return `<span class="${className} !w-8 !h-1 !rounded-none !bg-white/20 data-[state=active]:!bg-accent"></span>`;
-                }
-              }}
-              autoplay={{ delay: 6000 }}
-              className="border border-white/10 bg-white/5"
-            >
-              {projects.map((project, index) => (
-                <SwiperSlide key={index}>
-                  <div className="grid lg:grid-cols-12 gap-0">
-                    {/* Content Side */}
-                    <div className="lg:col-span-5 p-8 lg:p-16 border-r border-white/10 overflow-y-auto max-h-[600px]">
-                      <div className="editorial-label text-accent mb-4">{project.category}</div>
-                      <div className="flex flex-col gap-2 mb-6 text-xs text-white/50">
-                        <span>📍 {project.location}</span>
-                        <span>📅 {project.year}</span>
-                      </div>
-                      <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tight mb-8 leading-tight break-words">
-                        {project.title}
-                      </h2>
-                      
-                      <div className="space-y-10">
-                        <section>
-                          <h4 className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/40 mb-3 flex items-center">
-                            <ChevronRight className="h-3 w-3 mr-2 text-accent flex-shrink-0" />
-                            Problem Statement
-                          </h4>
-                          <p className="text-xs text-white/60 font-light leading-relaxed">{project.problem}</p>
-                        </section>
-                        <section>
-                          <h4 className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/40 mb-3 flex items-center">
-                            <ChevronRight className="h-3 w-3 mr-2 text-accent flex-shrink-0" />
-                            Methodology
-                          </h4>
-                          <p className="text-xs text-white/60 font-light leading-relaxed">{project.methodology}</p>
-                        </section>
-                      </div>
-                    </div>
-
-                    {/* Visual Side */}
-                    <div className="lg:col-span-7 relative bg-deep-slate">
-                      <div className="grid h-full grid-cols-2 gap-px bg-white/10">
-                        <div className="relative group overflow-hidden">
-                          <img
-                            src={project.beforeImage}
-                            alt="Before"
-                            className="h-full w-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
-                            referrerPolicy="no-referrer"
-                          />
-                          <div className="absolute top-8 left-8">
-                            <span className="editorial-label bg-deep-slate/80 px-3 py-1 text-white">Initial Data</span>
-                          </div>
+            <div className="relative px-10">
+              <Swiper
+                modules={[Navigation, Pagination, Autoplay, EffectFade]}
+                effect="fade"
+                spaceBetween={0}
+                slidesPerView={1}
+                navigation={{
+                  nextEl: '.swiper-button-next-custom',
+                  prevEl: '.swiper-button-prev-custom',
+                }}
+                pagination={{ 
+                  clickable: true,
+                  renderBullet: (index, className) => {
+                    return `<span class="${className} !w-8 !h-1 !rounded-none !bg-white/20 data-[state=active]:!bg-accent"></span>`;
+                  }
+                }}
+                autoplay={{ delay: 6000 }}
+                className="border border-white/10 bg-white/5 h-[600px] overflow-hidden"
+              >
+                {projects.map((project, index) => (
+                  <SwiperSlide key={index} className="h-full">
+                    <div className="grid lg:grid-cols-12 gap-0 h-full">
+                      {/* Content Side */}
+                      <div className="lg:col-span-5 p-8 lg:p-16 border-r border-white/10 overflow-y-auto h-full">
+                        <div className="editorial-label text-accent mb-4">{project.category}</div>
+                        <div className="flex flex-col gap-2 mb-6 text-xs text-white/50">
+                          <span>📍 {project.location}</span>
+                          <span>📅 {project.year}</span>
                         </div>
-                        <div className="relative group overflow-hidden">
-                          <img
-                            src={project.afterImage}
-                            alt="After"
-                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-1000"
-                            referrerPolicy="no-referrer"
-                          />
-                          <div className="absolute top-8 left-8">
-                            <span className="editorial-label bg-accent px-3 py-1 text-white">Processed Results</span>
-                          </div>
+                        <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tight mb-8 leading-tight break-words">
+                          {project.title}
+                        </h2>
+                        
+                        <div className="space-y-10">
+                          <section>
+                            <h4 className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/40 mb-3 flex items-center">
+                              <ChevronRight className="h-3 w-3 mr-2 text-accent flex-shrink-0" />
+                              Problem Statement
+                            </h4>
+                            <p className="text-xs text-white/60 font-light leading-relaxed">{project.problem}</p>
+                          </section>
+                          <section>
+                            <h4 className="text-[11px] uppercase tracking-[0.2em] font-bold text-white/40 mb-3 flex items-center">
+                              <ChevronRight className="h-3 w-3 mr-2 text-accent flex-shrink-0" />
+                              Methodology
+                            </h4>
+                            <p className="text-xs text-white/60 font-light leading-relaxed">{project.methodology}</p>
+                          </section>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
 
-            {/* Custom Navigation Buttons */}
-            <div className="absolute -bottom-20 right-10 flex gap-px bg-white/10 border border-white/10">
-              <button className="swiper-button-prev-custom p-6 hover:bg-white/5 transition-colors group">
-                <ArrowLeft className="h-5 w-5 text-white/40 group-hover:text-accent" />
-              </button>
-              <button className="swiper-button-next-custom p-6 hover:bg-white/5 transition-colors group">
-                <ArrowRight className="h-5 w-5 text-white/40 group-hover:text-accent" />
-              </button>
+                      {/* Visual Side */}
+                      <div className="lg:col-span-7 relative bg-deep-slate h-full">
+                        <div className="grid h-full grid-cols-2 gap-px bg-white/10">
+                          <div className="relative group overflow-hidden">
+                            <img
+                              src={project.beforeImage}
+                              alt="Before"
+                              className="h-full w-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
+                              referrerPolicy="no-referrer"
+                            />
+                            <div className="absolute top-8 left-8">
+                              <span className="editorial-label bg-deep-slate/80 px-3 py-1 text-white">Initial Data</span>
+                            </div>
+                          </div>
+                          <div className="relative group overflow-hidden">
+                            <img
+                              src={project.afterImage}
+                              alt="After"
+                              className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                              referrerPolicy="no-referrer"
+                            />
+                            <div className="absolute top-8 left-8">
+                              <span className="editorial-label bg-accent px-3 py-1 text-white">Processed Results</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+
+              {/* Custom Navigation Buttons */}
+              <div className="absolute -bottom-20 right-10 flex gap-px bg-white/10 border border-white/10">
+                <button className="swiper-button-prev-custom p-6 hover:bg-white/5 transition-colors group">
+                  <ArrowLeft className="h-5 w-5 text-white/40 group-hover:text-accent" />
+                </button>
+                <button className="swiper-button-next-custom p-6 hover:bg-white/5 transition-colors group">
+                  <ArrowRight className="h-5 w-5 text-white/40 group-hover:text-accent" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
       </div>
     </>
   );
