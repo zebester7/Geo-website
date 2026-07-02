@@ -1,9 +1,8 @@
-import { useEffect, useState, useRef } from "react";
-import { motion, useAnimation, useInView } from "motion/react";
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Sample project data - replace with your actual data
 const projectsData = [
   {
     id: 1,
@@ -58,35 +57,24 @@ const projectsData = [
 export function ProjectsCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [isHovering, setIsHovering] = useState(false);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const controls = useAnimation();
-  const inView = useInView(carouselRef, { once: false, amount: 0.2 });
-
-  // Duplicate projects for infinite scroll effect
-  const extendedProjects = [...projectsData, ...projectsData, ...projectsData];
-  const itemsToShow = 3;
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (isAutoPlaying && !isHovering) {
+    if (isAutoPlaying) {
       interval = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % projectsData.length);
       }, 4000);
     }
     return () => clearInterval(interval);
-  }, [isAutoPlaying, isHovering]);
-
-  useEffect(() => {
-    if (inView) {
-      controls.start({ opacity: 1, y: 0 });
-    }
-  }, [inView, controls]);
+  }, [isAutoPlaying]);
 
   const getVisibleProjects = () => {
-    const start = currentIndex;
-    const end = start + itemsToShow;
-    return extendedProjects.slice(start, end);
+    const items = [];
+    for (let i = 0; i < 3; i++) {
+      const index = (currentIndex + i) % projectsData.length;
+      items.push(projectsData[index]);
+    }
+    return items;
   };
 
   const handlePrev = () => {
@@ -102,75 +90,46 @@ export function ProjectsCarousel() {
   };
 
   return (
-    <section 
-      ref={carouselRef}
-      className="relative py-24 bg-gradient-to-b from-deep-slate to-black/95 overflow-hidden"
-    >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="grid-bg w-full h-full" />
-      </div>
-
-      {/* Glow Effects */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-accent/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-3xl" />
-
-      <div className="container mx-auto px-4 lg:px-10 relative z-10">
+    <section className="py-24 bg-gradient-to-b from-deep-slate to-black/95 border-t border-white/5">
+      <div className="container mx-auto px-4 lg:px-10">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 30 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <span className="editorial-label text-accent tracking-[0.3em] block mb-4">
+        <div className="text-center mb-16">
+          <span className="text-accent text-xs font-bold uppercase tracking-[0.3em] block mb-4">
             Featured Projects
           </span>
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-4">
             Our <span className="text-accent">Latest Work</span>
           </h2>
           <p className="text-white/60 max-w-2xl mx-auto text-lg font-light">
             Showcasing innovative solutions in geophysical surveys, data processing, 
             and AI-driven Earth science.
           </p>
-        </motion.div>
+        </div>
 
         {/* Carousel */}
-        <div 
-          className="relative"
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
-        >
+        <div className="relative">
           {/* Navigation Arrows */}
           <button
             onClick={handlePrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-sm hover:bg-white/20 p-3 rounded-full transition-all duration-300 -ml-4 lg:-ml-6 hover:scale-110"
-            aria-label="Previous projects"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all duration-300 -ml-4 lg:-ml-6"
           >
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
 
           <button
             onClick={handleNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-sm hover:bg-white/20 p-3 rounded-full transition-all duration-300 -mr-4 lg:-mr-6 hover:scale-110"
-            aria-label="Next projects"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all duration-300 -mr-4 lg:-mr-6"
           >
             <ChevronRight className="w-6 h-6 text-white" />
           </button>
 
           {/* Projects Grid */}
-          <motion.div
-            animate={controls}
-            initial={{ opacity: 0, y: 50 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {getVisibleProjects().map((project, index) => (
               <motion.div
-                key={`${project.id}-${index}`}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
+                key={project.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="group relative rounded-xl overflow-hidden bg-white/5 backdrop-blur-sm border border-white/10 hover:border-accent/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/20"
               >
@@ -185,7 +144,7 @@ export function ProjectsCarousel() {
                   
                   {/* Category Badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="inline-block px-3 py-1 bg-accent/90 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-wider rounded">
+                    <span className="inline-block px-3 py-1 bg-accent/90 text-white text-xs font-bold uppercase tracking-wider rounded">
                       {project.category}
                     </span>
                   </div>
@@ -220,7 +179,7 @@ export function ProjectsCarousel() {
                 </div>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         </div>
 
         {/* Progress Indicators */}
@@ -239,16 +198,8 @@ export function ProjectsCarousel() {
                   ? "w-12 bg-accent" 
                   : "w-6 bg-white/20 hover:bg-white/40"
               )}
-              aria-label={`Go to project ${index + 1}`}
             />
           ))}
-        </div>
-
-        {/* Auto-Play Indicator */}
-        <div className="text-center mt-6">
-          <span className="text-xs text-white/30 uppercase tracking-[0.3em]">
-            {isAutoPlaying ? "● Auto-scrolling" : "▸ Manual navigation"}
-          </span>
         </div>
       </div>
     </section>
