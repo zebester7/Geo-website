@@ -1,135 +1,166 @@
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { ArrowRight, Globe, Users, Briefcase, BookOpen } from "lucide-react";
-import { Link } from "react-router-dom";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
-import { seedDatabase } from "@/lib/seed";
-import { db, OperationType, handleFirestoreError } from "@/lib/firebase";
-import { collection, query, where, getDocs, limit } from "firebase/firestore";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, ChevronRight, Globe, Users, Briefcase, BookOpen } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ProjectsCarousel } from "@/components/ProjectsCarousel";
 
-export default function Home() {
-  const [topScorer, setTopScorer] = useState<any>(null);
-
-  useEffect(() => {
-    const init = async () => {
-      await seedDatabase();
-      try {
-        const q = query(collection(db, "students"), where("isTopScorer", "==", true), limit(1));
-        const snapshot = await getDocs(q);
-        if (!snapshot.empty) {
-          setTopScorer({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
-        }
-      } catch (error) {
-        handleFirestoreError(error, OperationType.LIST, "students");
-      }
-    };
-    init();
-  }, []);
-
+// Hero Section Component
+function HeroSection() {
   return (
-    <div className="relative min-h-screen">
-      <div className="grid-bg absolute inset-0 pointer-events-none" />
-      
+    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-b from-deep-slate to-black/95">
+      {/* Background Pattern */}
+      <div className="absolute inset-0">
+        <div className="grid-bg w-full h-full opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-deep-slate via-transparent to-transparent" />
+      </div>
+
+      {/* Glow Effects */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/10 rounded-full blur-3xl animate-pulse" />
+      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-3xl" />
+
       <div className="container mx-auto px-4 lg:px-10 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-x border-white/10 min-h-[calc(100vh-80px)]">
-          
-          {/* Hero Section */}
-          <main className="lg:col-span-8 flex flex-col justify-center py-20 lg:pr-10">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="editorial-label text-accent mb-6">Department of Geophysics</div>
-              <h1 className="text-editorial-hero mb-8">
-                MAPPING<br />THE<br />DEPTHS
-              </h1>
-              <p className="max-w-lg text-lg leading-relaxed text-white/60 font-light mb-10">
-                Technical authority in seismic interpretation, data acquisition, and AI-driven subsurface modeling. 
-                Empowering the next generation of Earth science experts.
-              </p>
-              <div>
-                <Button asChild className="bg-white text-deep-slate hover:bg-white/90 rounded-none px-10 py-7 text-xs font-black uppercase tracking-widest">
-                  <Link to="/services">Request Survey &rarr;</Link>
-                </Button>
-              </div>
-            </motion.div>
-          </main>
+        <div className="max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="inline-block editorial-label text-accent tracking-[0.3em] mb-6">
+              Pioneering Earth Science
+            </span>
+          </motion.div>
 
-          {/* Sidebar */}
-          <aside className="lg:col-span-4 border-l border-white/10 pt-20 lg:pl-10 pb-20">
-            <div className="space-y-16">
-              <div className="portal-widget">
-                <h2 className="text-[12px] uppercase tracking-[0.15em] font-bold text-white/40 mb-6">Talent Portal Filters</h2>
-                <div className="flex flex-wrap gap-2">
-                  {["Seismic", "GIS", "Gravity", "AI/ML", "Magnetic", "Neural Networks", "Earth Science"].map((tag) => (
-                    <div 
-                      key={tag} 
-                      className={cn(
-                        "px-3 py-1.5 text-[10px] uppercase border border-white/10 bg-white/5",
-                        (tag === "Seismic" || tag === "AI/ML") && "border-accent text-accent"
-                      )}
-                    >
-                      {tag}
-                    </div>
-                  ))}
-                </div>
-              </div>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-editorial-hero text-white leading-[0.85] mb-6"
+          >
+            Technical Authority in
+            <span className="block text-accent">Geophysical Solutions</span>
+          </motion.h1>
 
-              <div className="portal-widget">
-                <h2 className="text-[12px] uppercase tracking-[0.15em] font-bold text-white/40 mb-6">Core Services</h2>
-                <ul className="space-y-0">
-                  {[
-                    "Field Data Surveys",
-                    "Subsurface Interpretation",
-                    "Thesis Advisory",
-                    "Custom ML Modeling"
-                  ].map((service) => (
-                    <li key={service} className="flex justify-between items-center py-4 border-b border-white/5 group cursor-pointer hover:bg-white/5 transition-colors px-2">
-                      <span className="text-sm font-medium text-white/80 group-hover:text-white">{service}</span>
-                      <span className="text-accent text-xs">▸</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </aside>
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-white/70 text-lg max-w-2xl font-light mb-10 leading-relaxed"
+          >
+            Advanced geophysical surveys, AI-driven data processing, and innovative 
+            Earth science solutions for academia and industry.
+          </motion.p>
 
-          {/* Footer Spotlight Area */}
-          <footer className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-12 items-center border-t border-white/10 py-0">
-            <div className="lg:col-span-5 bg-accent h-full min-h-[160px] flex items-center p-8 gap-6">
-              <div className="w-20 h-20 bg-deep-slate rounded-full flex items-center justify-center text-2xl font-black text-white shrink-0 overflow-hidden">
-                {topScorer?.photoUrl ? (
-                  <img src={topScorer.photoUrl} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                ) : (
-                  topScorer?.name?.split(" ").map((n: string) => n[0]).join("") || "EV"
-                )}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-wrap gap-4"
+          >
+            <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-white font-bold px-8 py-6 text-base">
+              <Link to="/services">
+                Explore Services
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10 px-8 py-6 text-base">
+              <Link to="/talent">
+                Talent Portal
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 pt-8 border-t border-white/10"
+          >
+            {[
+              { label: "Projects Completed", value: "150+" },
+              { label: "Satisfied Clients", value: "200+" },
+              { label: "Industry Partners", value: "50+" },
+              { label: "Years Experience", value: "15+" },
+            ].map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-2xl font-bold text-white">{stat.value}</div>
+                <div className="text-xs text-white/40 uppercase tracking-wider mt-1">{stat.label}</div>
               </div>
-              <div>
-                <h3 className="text-[11px] uppercase tracking-[0.2em] text-white/70 mb-1 font-bold">Top Scorer Spotlight</h3>
-                <h2 className="text-2xl font-black text-white mb-1">{topScorer?.name || "Elena M. Vance"}</h2>
-                <p className="text-xs text-white/90">GPA {topScorer?.gpa || "3.98"} | Specialization: {topScorer?.tags?.[0] || "Seismic ML"}</p>
-              </div>
-            </div>
-            
-            <div className="lg:col-span-7 flex justify-between px-10 py-10 lg:py-0">
-              <div className="text-center lg:text-left">
-                <h4 className="text-4xl font-light text-white mb-1">142</h4>
-                <p className="text-[10px] uppercase tracking-widest text-white/50">Graduate Talents</p>
-              </div>
-              <div className="text-center lg:text-left">
-                <h4 className="text-4xl font-light text-white mb-1">38</h4>
-                <p className="text-[10px] uppercase tracking-widest text-white/50">Global Projects</p>
-              </div>
-              <div className="text-center lg:text-left">
-                <h4 className="text-4xl font-light text-white mb-1">12</h4>
-                <p className="text-[10px] uppercase tracking-widest text-white/50">AI Algorithms</p>
-              </div>
-            </div>
-          </footer>
+            ))}
+          </motion.div>
         </div>
       </div>
-    </div>
+    </section>
+  );
+}
+
+// Features Section
+function FeaturesSection() {
+  const features = [
+    {
+      icon: Globe,
+      title: "Geophysical Surveys",
+      description: "State-of-the-art seismic, magnetic, and gravity surveys for mineral exploration."
+    },
+    {
+      icon: Users,
+      title: "Talent Development",
+      description: "Training and mentorship programs for aspiring geophysicists and Earth scientists."
+    },
+    {
+      icon: Briefcase,
+      title: "Industry Solutions",
+      description: "Custom geophysical solutions for mining, oil & gas, and environmental sectors."
+    },
+    {
+      icon: BookOpen,
+      title: "Research & Innovation",
+      description: "Cutting-edge research in AI-driven data processing and Earth science applications."
+    }
+  ];
+
+  return (
+    <section className="py-24 bg-deep-slate/50 border-t border-white/5">
+      <div className="container mx-auto px-4 lg:px-10">
+        <div className="text-center mb-16">
+          <span className="editorial-label text-accent tracking-[0.3em] block mb-4">
+            What We Do
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white">
+            Comprehensive Earth Science
+            <span className="block text-accent">Solutions</span>
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="group p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-accent/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:shadow-accent/20 text-center"
+            >
+              <div className="inline-flex p-4 rounded-full bg-accent/10 text-accent group-hover:bg-accent group-hover:text-white transition-all duration-500 mb-4">
+                <feature.icon className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
+              <p className="text-white/60 text-sm font-light leading-relaxed">{feature.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function Home() {
+  return (
+    <>
+      <HeroSection />
+      <FeaturesSection />
+      <ProjectsCarousel />
+    </>
   );
 }
